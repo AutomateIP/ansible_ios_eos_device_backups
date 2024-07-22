@@ -1,0 +1,58 @@
+---
+- name: Backup configurations from network devices
+  hosts: "{{ target_group | default('all') }}"
+  gather_facts: no
+  tasks:
+    - name: Create configurations directory if not exists
+      file:
+        path: "configurations/{{ group_names[0] }}"
+        state: directory
+
+    - name: Gather configuration from Cisco IOS devices
+      when: ansible_network_os == 'ios'
+      ios_command:
+        commands:
+          - show running-config
+      register: ios_config
+
+    - name: Save Cisco IOS configuration to file
+      when: ansible_network_os == 'ios'
+      copy:
+        content: "{{ ios_config.stdout[0] }}"
+        dest: "configurations/{{ group_names[0] }}/{{ inventory_hostname }}.txt"
+
+    - name: Gather configuration from Arista EOS devices
+      when: ansible_network_os == 'eos'
+      eos_command:
+        commands:
+          - show running-config
+      register: eos_config
+
+    - name: Save Arista EOS configuration to file
+      when: ansible_network_os == 'eos'
+      copy:
+        content: "{{ eos_config.stdout[0] }}"
+        dest: "configurations/{{ group_names[0] }}/{{ inventory_hostname }}.txt"
+
+- name: Commit and push configurations to GitLab
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Add configurations to git
+      command: git add .
+      args:
+        chdir: configurations
+
+    - name: Commit configurations to git
+      command: git commit -m "Backup configurations"
+      args:
+        chdir: configurations
+      ignore_errors: true
+
+    - name: Push configurations to GitLab
+      command: git push -u origin master
+      args:
+        chdir: configurations
+      environment:
+        GIT_SSH_COMMAND: "ssh -i /opt/custom/ssh/id_rsa"
+      ignore_errors: true
