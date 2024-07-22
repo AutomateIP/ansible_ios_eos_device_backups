@@ -28,7 +28,7 @@
         - ansible_network_os == 'ios'
         - target_devices is not defined or target_devices | length == 0 or inventory_hostname in target_devices
       copy:
-        content: "{{ ios_config.stdout[1] }}" #Modify back to 0 when wr gets cleaned up
+        content: "{{ ios_config.stdout[0] }}" #Modify back to 0 when wr gets cleaned up
         dest: "configurations/{{ group_names[0] }}/{{ inventory_hostname }}.txt"
 
     - name: Gather configuration from Arista EOS devices
