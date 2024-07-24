@@ -1,78 +1,100 @@
+# This playbook will back up the running configuration from Cisco IOS or Arista
+# EOS devices.   The following arguments must be set at runtime in order for
+# this playbook to run successfully
+#
+# - git_repo_url: The URL of the Git repository to commit the configurations to
+# - git_repo_branch: The Git branch to use
 ---
 - name: Backup configurations from network devices
+
   hosts: "{{ target_group | default('all') }}"
   gather_facts: no
+
+  pre_tasks:
+    - name: fail if git_repo_url is not defined
+      ansible.builtin.fail:
+        msg: "missing required variable: git_repo_url"
+      when: git_repo_url is undefined or git_repo_url == ""
+      run_once: true
+
+    - name: fail if git_repo_branch is not defined
+      ansible.builtin.fail:
+        msg: "missing required variable: git_repo_branch"
+      when: git_repo_branch is undefined or git_repo_url == ""  
+      run_once: true
+
   tasks:
-    - name: Create configurations directory if not exists
-      file:
-        path: "configurations/{{ group_names[0] }}"
-        state: directory
+    - name: Backup device configurations and commit to git
+      block:
 
-    - name: Check if target_devices is defined
-      assert:
-        that: target_devices is not defined or target_devices | length == 0 or inventory_hostname in target_devices
-        fail_msg: "This host is not in the target_devices list"
+      - name: create temp directory
+        ansible.builtin.tempfile:
+          state: directory
+        register: tempdir
+        run_once: true
 
-    - name: Gather configuration from Cisco IOS devices
-      when:
-        - ansible_network_os == 'ios'
-        - target_devices is not defined or target_devices | length == 0 or inventory_hostname in target_devices
-      ios_command:
-        commands:
-          - wr #Remove and modity output grabbing array after testing. This forces changes in configs. 
-          - show running-config
-      register: ios_config
+      - name: clone existing repository
+        ansible.builtin.git:
+          key_file: "ssh -i /opt/custom/ssh/id_rsa"
+          repo: "{{ git_repo_url }}"
+          dest: "{{ tempdir.path }}"
+        run_once: true
 
-    - name: Save Cisco IOS configuration to file
-      when:
-        - ansible_network_os == 'ios'
-        - target_devices is not defined or target_devices | length == 0 or inventory_hostname in target_devices
-      copy:
-        content: "{{ ios_config.stdout[0] }}" #Modify back to 0 when wr gets cleaned up
-        dest: "configurations/{{ group_names[0] }}/{{ inventory_hostname }}.txt"
+      - name: ensure configuration directory exists
+        ansible.builtin.file:
+          path: "{{ tempdir.path }}/configurations/{{ group_names[0] }}"
+          state: directory
+        run_once: true
 
-    - name: Gather configuration from Arista EOS devices
-      when:
-        - ansible_network_os == 'eos'
-        - target_devices is not defined or target_devices | length == 0 or inventory_hostname in target_devices
-      eos_command:
-        commands:
-          - show running-config
-      register: eos_config
+      - name: Check if target_devices is defined 
+        assert: 
+          that: target_devices is not defined or target_devices | length == 0 or inventory_hostname in target_devices 
+          fail_msg: "This host is not in the target_devices list" 
 
-    - name: Save Arista EOS configuration to file
-      when:
-        - ansible_network_os == 'eos'
-        - target_devices is not defined or target_devices | length == 0 or inventory_hostname in target_devices
-      copy:
-        content: "{{ eos_config.stdout[0] }}"
-        dest: "configurations/{{ group_names[0] }}/{{ inventory_hostname }}.txt"
+      - name: Gather configuration from Cisco IOS devices
+        when:
+          - ansible_network_os == 'ios'
+          - target_devices is not defined or target_devices | length == 0 or inventory_hostname in target_devices
+        ios_command:
+          commands:
+            - show running-config
+        register: ios_config
+    
+      - name: Gather configuration from Arista EOS devices
+        when:
+          - ansible_network_os == 'eos'
+          - target_devices is not defined or target_devices | length == 0 or inventory_hostname in target_devices
+        eos_command:
+          commands:
+            - show running-config
+        register: eos_config
 
-- name: Commit and push configurations to GitLab
-  hosts: localhost
-  gather_facts: no
-  tasks:
-    - name: Initialize a git repository if not exists
-      command: git init
-      args:
-        chdir: configurations
-      ignore_errors: true
+      - name: Set device_config
+        set_fact:
+          device_config: "{{ ios_config | combine(eos_config) }}"
 
-    - name: Add configurations to git
-      command: git add .
-      args:
-        chdir: configurations
+      - name: fail if device_config is not defined
+        ansible.builtin.fail:
+          msg: "Something went wrong gathering: device_config"
+        when: device_config is undefined or device_config == ""
 
-    - name: Commit configurations to git
-      command: git commit -m "Backup configurations."
-      args:
-        chdir: configurations
-      ignore_errors: true
-
-    - name: Push configurations to GitLab
-      command: git push -u origin master
-      args:
-        chdir: configurations
-      environment:
-        GIT_SSH_COMMAND: "ssh -i /opt/custom/ssh/id_rsa"
-      ignore_errors: true
+      - name: Save device_config to a file
+        ansible.builtin.copy:
+            content: "{{ device_config.stdout[0] }}"
+            dest: "{{ tempdir.path }}/{{ ansible_network_os }}/{{ inventory_hostname_short }}.txt"
+        
+      #- name: Add updated files to git
+      #  ansible.builtin.shell: |
+      #      git add .
+      #      git commit -m 'Backup configurations'
+      #      git push -u origin {{ git_repo_branch }}          
+      #  args:
+      #    chdir: "{{ tempdir.path }}"
+      #  environment:
+      #    GIT_SSH_COMMAND: "ssh -i /opt/custom/ssh/id_rsa"
+          
+      always:
+        - name: Delete temp directory
+          ansible.builtin.file:
+            path: "{{ tempdir.path }}"
+            state: absent
