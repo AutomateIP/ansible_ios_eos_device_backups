@@ -9,6 +9,7 @@
 
   hosts: "{{ target_group | default('all') }}"
   gather_facts: no
+  strategy: ansible.builtin.linear
 
   pre_tasks:
     - name: fail if git_repo_url is not defined
@@ -98,3 +99,4 @@
           ansible.builtin.file:
             path: "{{ tempdir.path }}"
             state: absent
+          run_once: true
