@@ -43,7 +43,7 @@
 
       - name: ensure configuration directory exists
         ansible.builtin.file:
-          path: "{{ tempdir.path }}/configurations/{{ group_names[0] }}"
+          path: "{{ tempdir.path }}/{{ group_names[0] }}"
           state: directory
         run_once: true
 

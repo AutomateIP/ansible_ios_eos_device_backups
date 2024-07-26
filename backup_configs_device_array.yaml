@@ -11,41 +11,41 @@
   gather_facts: no
   strategy: ansible.builtin.linear
 
-  pre_tasks:
-    - name: fail if git_repo_url is not defined
-      ansible.builtin.fail:
-        msg: "missing required variable: git_repo_url"
-      when: git_repo_url is undefined or git_repo_url == ""
-      run_once: true
+  #pre_tasks:
+  #  - name: fail if git_repo_url is not defined
+  #    ansible.builtin.fail:
+  #      msg: "missing required variable: git_repo_url"
+  #    when: git_repo_url is undefined or git_repo_url == ""
+  #    run_once: true
 
-    - name: fail if git_repo_branch is not defined
-      ansible.builtin.fail:
-        msg: "missing required variable: git_repo_branch"
-      when: git_repo_branch is undefined or git_repo_url == ""  
-      run_once: true
+  #  - name: fail if git_repo_branch is not defined
+  #    ansible.builtin.fail:
+  #      msg: "missing required variable: git_repo_branch"
+  #    when: git_repo_branch is undefined or git_repo_url == ""  
+  #    run_once: true
 
   tasks:
     - name: Backup device configurations and commit to git
       block:
 
-      - name: create temp directory
-        ansible.builtin.tempfile:
-          state: directory
-        register: tempdir
-        run_once: true
+      #- name: create temp directory
+      #  ansible.builtin.tempfile:
+      #    state: directory
+      #  register: tempdir
+      #  run_once: true
 
-      - name: clone existing repository
-        ansible.builtin.git:
-          key_file: "ssh -i /opt/custom/ssh/id_rsa"
-          repo: "{{ git_repo_url }}"
-          dest: "{{ tempdir.path }}"
-        run_once: true
+      #- name: clone existing repository
+      #  ansible.builtin.git:
+      #    key_file: "ssh -i /opt/custom/ssh/id_rsa"
+      #    repo: "{{ git_repo_url }}"
+      #    dest: "{{ tempdir.path }}"
+      #  run_once: true
 
-      - name: ensure configuration directory exists
-        ansible.builtin.file:
-          path: "{{ tempdir.path }}/configurations/{{ group_names[0] }}"
-          state: directory
-        run_once: true
+      #- name: ensure configuration directory exists
+      #  ansible.builtin.file:
+      #    path: "{{ tempdir.path }}/configurations/{{ group_names[0] }}"
+      #    state: directory
+      #  run_once: true
 
       - name: Check if target_devices is defined 
         assert: 
@@ -84,19 +84,19 @@
             content: "{{ device_config.stdout[0] }}"
             dest: "{{ tempdir.path }}/{{ ansible_network_os }}/{{ inventory_hostname_short }}.txt"
         
-      - name: Add updated files to git
-        ansible.builtin.shell: |
-            git add .
-            git commit -m 'Backup configurations'
-            git push -u origin {{ git_repo_branch }}          
-        args:
-          chdir: "{{ tempdir.path }}"
-        environment:
-          GIT_SSH_COMMAND: "ssh -i /opt/custom/ssh/id_rsa"
+      #- name: Add updated files to git
+      #  ansible.builtin.shell: |
+      #      git add .
+      #      git commit -m 'Backup configurations'
+      #      git push -u origin {{ git_repo_branch }}          
+      #  args:
+      #    chdir: "{{ tempdir.path }}"
+      #  environment:
+      #    GIT_SSH_COMMAND: "ssh -i /opt/custom/ssh/id_rsa"
           
-      always:
-        - name: Delete temp directory
-          ansible.builtin.file:
-            path: "{{ tempdir.path }}"
-            state: absent
-          run_once: true
+      #always:
+      #  - name: Delete temp directory
+      #    ansible.builtin.file:
+      #      path: "{{ tempdir.path }}"
+      #      state: absent
+      #    run_once: true

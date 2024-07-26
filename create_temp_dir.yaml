@@ -1,0 +1,21 @@
+---
+- name: Create temp directory for configs 
+  hosts: 127.0.0.1 
+  gather_facts: no 
+
+  tasks:
+    - name: Create temp directory
+      block:
+      - name: create temp directory
+        ansible.builtin.tempfile:
+          state: directory
+        register: tempdir
+        run_once: true
+
+      - name: clone existing repository
+        ansible.builtin.git:
+          key_file: "ssh -i /opt/custom/ssh/id_rsa"
+          repo: "{{ git_repo_url }}"
+          version: "{{ git_repo_branch }}"
+          dest: "{{ tempdir.path }}"
+        run_once: true

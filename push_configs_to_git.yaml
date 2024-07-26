@@ -1,0 +1,15 @@
+---
+- name: Create temp directory for configs 
+  hosts: 127.0.0.1 
+  gather_facts: no 
+
+  tasks:
+    - name: Add updated files to git
+      ansible.builtin.shell: |
+        git add .
+        git commit -m 'Backup configurations'
+        git push -u origin {{ git_repo_branch }}          
+      args:
+        chdir: "{{ tempdir.path }}"
+      environment:
+        GIT_SSH_COMMAND: "ssh -i /opt/custom/ssh/id_rsa"

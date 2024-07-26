@@ -1,0 +1,10 @@
+---
+- name: Create temp directory for configs 
+  hosts: 127.0.0.1 
+  gather_facts: no 
+
+  tasks:
+    - name: Delete temp directory
+      ansible.builtin.file:
+        path: "{{ tempdir }}"
+        state: absent
