@@ -1,0 +1,16 @@
+{
+    "properties": {
+      "git_repo_branch": {
+        "description": "The repo branch",
+        "type": "string"
+      },
+      "tempdir": {
+        "description": "The temporary directory path",
+        "type": "string"
+      }
+    },
+    "required": [
+      "tempdir",
+      "git_repo_branch"
+    ]
+  }

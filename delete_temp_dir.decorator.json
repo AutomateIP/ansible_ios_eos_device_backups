@@ -1,0 +1,11 @@
+{
+    "properties": {
+      "tempdir": {
+        "description": "The temporary directory path",
+        "type": "string"
+      }
+    },
+    "required": [
+      "tempdir"
+    ]
+  }

@@ -1,0 +1,16 @@
+{
+    "properties": {
+      "target_devices": {
+        "description": "The array of individual devices.",
+        "type": "array"
+      },
+      "tempdir": {
+        "description": "The temporary directory",
+        "type": "string"
+      }
+    },
+    "required": [
+      "target_devices",
+      "tempdir"
+    ]
+  }

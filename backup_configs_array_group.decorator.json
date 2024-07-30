@@ -1,0 +1,21 @@
+{
+    "properties": {
+      "git_repo_branch": {
+        "description": "The repo branch",
+        "type": "string"
+      },
+      "git_repo_url": {
+        "description": "The repo",
+        "type": "string"
+      },
+      "target_devices": {
+        "description": "The array of individual devices.",
+        "type": "array"
+      }
+    },
+    "required": [
+      "target_devices",
+      "git_repo_url",
+      "git_repo_branch"
+    ]
+  }

@@ -10,6 +10,6 @@
         git commit -m 'Backup configurations'
         git push -u origin {{ git_repo_branch }}          
       args:
-        chdir: "{{ tempdir.path }}"
+        chdir: "{{ tempdir }}"
       environment:
         GIT_SSH_COMMAND: "ssh -i /opt/custom/ssh/id_rsa"

@@ -60,6 +60,7 @@
           commands:
             - show running-config
         register: ios_config
+        no_log: True
     
       - name: Gather configuration from Arista EOS devices
         when:
@@ -73,6 +74,7 @@
       - name: Set device_config
         set_fact:
           device_config: "{{ ios_config | combine(eos_config) }}"
+        no_log: True
 
       - name: fail if device_config is not defined
         ansible.builtin.fail:
@@ -82,7 +84,7 @@
       - name: Save device_config to a file
         ansible.builtin.copy:
             content: "{{ device_config.stdout[0] }}"
-            dest: "{{ tempdir.path }}/{{ ansible_network_os }}/{{ inventory_hostname_short }}.txt"
+            dest: "{{ tempdir }}/{{ ansible_network_os }}/{{ inventory_hostname_short }}.txt"
         
       #- name: Add updated files to git
       #  ansible.builtin.shell: |
