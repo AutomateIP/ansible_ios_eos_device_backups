@@ -10,3 +10,4 @@ pycparser==2.22
 PyNaCl==1.5.0
 PyYAML==6.0.2
 resolvelib==0.8.1
+ansible-pylibssh
