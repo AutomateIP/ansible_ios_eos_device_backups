@@ -1,5 +1,4 @@
-ansible-base==2.10.17
-ansible-core==2.14.0
+ansible-core
 bcrypt==4.2.0
 cffi==1.17.1
 cryptography==43.0.3
