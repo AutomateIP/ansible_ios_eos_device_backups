@@ -1,12 +1,17 @@
 {
+    "$id": "backup_configs_local_groups",
+    "$schema": "https://json-schema.org/draft/202012/schema",
+    "type": "object",
     "properties": {
       "git_repo_branch": {
         "description": "The repo branch",
-        "type": "string"
+        "type": "string",
+        "default": "master"
       },
       "git_repo_url": {
         "description": "The repo",
-        "type": "string"
+        "type": "string",
+        "default": "git@gitlab.com:itential/sales-engineer/sedemos/iag_device_backups.git"
       },
       "target_group": {
         "description": "The array of individual devices.",

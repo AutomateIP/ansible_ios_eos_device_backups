@@ -1,24 +1,26 @@
 all:
   children:
-    ios_devices:
+    ios:
       hosts:
-        10.1.8.97:
-          vars:
-            ansible_network_os: ios
-            ansible_become: yes
-            ansible_become_method: enable
-            ansible_connection: network_cli
-            ansible_network_provider: ansible-network.cisco_ios
-            ansible_ssh_common_args: -o ProxyCommand="ssh selab-jump"
+        IOS-CSR-AWS-1:
+          ansible_user: itential
+          ansible_password: itential
+          ansible_host: 10.1.8.97
+          ansible_network_os: ios
+          ansible_become: yes
+          ansible_become_method: enable
+          ansible_connection: network_cli
+          host_key_checking: 0
 
-    eos_devices:
+    eos:
       hosts:
-        10.1.6.81:
-          vars:
-            ansible_become: true
-            ansible_become_method: enable
-            ansible_connection: network_cli
-            ansible_network_os: eos
-            ansible_port: 22
-            host_key_checking: 0
-            ansible_ssh_common_args: -o ProxyCommand="ssh selab-jump"
+        EOS-AWS-1:
+          ansible_user: itential
+          ansible_password: itential
+          ansible_host: 10.1.6.81
+          ansible_become: true
+          ansible_become_method: enable
+          ansible_connection: network_cli
+          ansible_network_os: eos
+          ansible_port: 22
+          host_key_checking: 0

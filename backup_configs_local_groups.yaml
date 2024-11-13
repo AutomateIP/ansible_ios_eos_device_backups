@@ -36,7 +36,7 @@
 
       - name: clone existing repository
         ansible.builtin.git:
-          key_file: "ssh -i ~/.ssh/id_rsa"
+          key_file: "ssh -i /home/ec2-user/.ssh/id_rsa"
           repo: "{{ git_repo_url }}"
           dest: "{{ tempdir.path }}"
         run_once: true
@@ -78,13 +78,15 @@
 
       - name: Add updated files to git
         ansible.builtin.shell: |
+            git config --global user.email joksan.flores@itential.com
+            git config --global user.name joksan.flores
             git add .
             git commit -m 'Backup configurations'
             git push -u origin {{ git_repo_branch }}          
         args:
           chdir: "{{ tempdir.path }}"
         environment:
-          GIT_SSH_COMMAND: "ssh -i ~/.ssh/id_rsa"
+          GIT_SSH_COMMAND: "ssh -i /home/ec2-user/.ssh/id_rsa"
         run_once: true
 
       always:

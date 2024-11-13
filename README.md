@@ -6,4 +6,4 @@ ansible-playbook -i ../../inventory/hosts.yml backup_configs_device_array.yaml -
 
 ansible-playbook delete_temp_dir.yaml --extra-vars='tempdir=/tmp/ansible.fd8xwjp1' -vvv
 
-ansible-playbook -i inventory.yml backup_configs_local_groups.yaml --extra-vars 'target_group=ios_devices git_repo_branch=master git_repo_url=git@gitlab.com:itential/sales-engineer/sedemos/iag_device_backups.git' -vvv
+ansible-playbook -i inventory.yml backup_configs_local_groups.yaml --extra-vars 'target_group=ios git_repo_branch=master git_repo_url=git@gitlab.com:itential/sales-engineer/sedemos/iag_device_backups.git' -vv
