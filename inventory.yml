@@ -12,6 +12,8 @@ all:
           ansible_connection: network_cli
           host_key_checking: 0
           ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+          host_key_auto_add: True
+
 
     eos:
       hosts:
@@ -26,3 +28,5 @@ all:
           ansible_port: 22
           host_key_checking: 0
           ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+          host_key_auto_add: True
+
