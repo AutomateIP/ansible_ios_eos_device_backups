@@ -11,6 +11,7 @@ all:
           ansible_become_method: enable
           ansible_connection: network_cli
           host_key_checking: 0
+          ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
 
     eos:
       hosts:
@@ -24,3 +25,4 @@ all:
           ansible_network_os: eos
           ansible_port: 22
           host_key_checking: 0
+          ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
