@@ -12,12 +12,11 @@
   gather_facts: no
   strategy: ansible.builtin.linear #change default from free to linear
 
-  pre_tasks:
-    - name: Set Vars
-      vars:
-        git_repo_branch: master
-        git_repo_url: git@gitlab.com:itential/sales-engineer/sedemos/iag_device_backups.git
+  vars:
+    git_repo_branch: "master"
+    git_repo_url: "git@gitlab.com:itential/sales-engineer/sedemos/iag_device_backups.git"
 
+  pre_tasks:
     - name: fail if git_repo_url is not defined
       ansible.builtin.fail:
         msg: "missing required variable: git_repo_url"
