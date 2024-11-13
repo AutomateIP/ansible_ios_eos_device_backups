@@ -1,0 +1,24 @@
+all:
+  children:
+    ios_devices:
+      hosts:
+        10.1.8.97:
+          vars:
+            ansible_network_os: ios
+            ansible_become: yes
+            ansible_become_method: enable
+            ansible_connection: network_cli
+            ansible_network_provider: ansible-network.cisco_ios
+            ansible_ssh_common_args: -o ProxyCommand="ssh selab-jump"
+
+    eos_devices:
+      hosts:
+        10.1.6.81:
+          vars:
+            ansible_become: true
+            ansible_become_method: enable
+            ansible_connection: network_cli
+            ansible_network_os: eos
+            ansible_port: 22
+            host_key_checking: 0
+            ansible_ssh_common_args: -o ProxyCommand="ssh selab-jump"

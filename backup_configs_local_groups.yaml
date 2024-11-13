@@ -4,7 +4,7 @@
 #
 # - git_repo_url: The URL of the Git repository to commit the configurations to
 # - git_repo_branch: The Git branch to use
-# - device target group from ansible inventory
+# - device target_group from ansible inventory
 ---
 - name: Backup configurations from network devices
 
@@ -36,7 +36,7 @@
 
       - name: clone existing repository
         ansible.builtin.git:
-          key_file: "ssh -i /opt/custom/ssh/id_rsa"
+          key_file: "ssh -i ~/.ssh/id_rsa"
           repo: "{{ git_repo_url }}"
           dest: "{{ tempdir.path }}"
         run_once: true
@@ -74,6 +74,7 @@
         ansible.builtin.copy:
           content: "{{ device_config.stdout[0] }}"
           dest: "{{ tempdir.path }}/{{ group_names[0] }}/{{ inventory_hostname_short }}.txt"
+          #dest: "{{ tempdir }}/{{ ansible_network_os }}/{{ inventory_hostname_short }}.txt"
 
       - name: Add updated files to git
         ansible.builtin.shell: |
@@ -83,7 +84,7 @@
         args:
           chdir: "{{ tempdir.path }}"
         environment:
-          GIT_SSH_COMMAND: "ssh -i /opt/custom/ssh/id_rsa"
+          GIT_SSH_COMMAND: "ssh -i ~/.ssh/id_rsa"
         run_once: true
 
       always:
