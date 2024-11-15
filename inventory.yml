@@ -29,4 +29,3 @@ all:
           host_key_checking: 0
           ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
           host_key_auto_add: True
-

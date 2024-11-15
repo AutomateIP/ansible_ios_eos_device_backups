@@ -19,8 +19,5 @@
       }
     },
     "required": [
-      "target_group",
-      "git_repo_url",
-      "git_repo_branch"
     ]
   }
