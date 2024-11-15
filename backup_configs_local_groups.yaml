@@ -37,6 +37,7 @@
           state: directory
         register: tempdir
         run_once: true
+        delegate_to: localhost
 
       - name: clone existing repository
         #ansible.builtin.git:
@@ -47,12 +48,14 @@
           msg:
           - "Successfully cloned repo: {{ git_repo_url }}"
         run_once: true
+        delegate_to: localhost
 
       - name: ensure configuration directory exists
         ansible.builtin.file:
           path: "{{ tempdir.path }}/{{ group_names[0] }}"
           state: directory
         run_once: true
+        delegate_to: localhost
 
       - name: Gather configuration from Cisco IOS devices
         when: ansible_network_os == 'ios'
@@ -71,17 +74,20 @@
       - name: Set device_config
         set_fact:
           device_config: "{{ ios_config | combine(eos_config) }}"
+        delegate_to: localhost
 
       - name: fail if device_config is not defined
         ansible.builtin.fail:
           msg: "missing required variable: device_config"
         when: device_config is undefined or device_config == ""
+        delegate_to: localhost
 
       - name: Save configuration to file
         ansible.builtin.copy:
           content: "{{ device_config.stdout[0] }}"
           dest: "{{ tempdir.path }}/{{ group_names[0] }}/{{ inventory_hostname_short }}.txt"
           #dest: "{{ tempdir }}/{{ ansible_network_os }}/{{ inventory_hostname_short }}.txt"
+        delegate_to: localhost
 
       - name: Add updated files to git
         #ansible.builtin.shell: |
@@ -98,6 +104,7 @@
           msg:
           - "Successfully pushed to repo: {{ git_repo_url }}"
         run_once: true
+        delegate_to: localhost
 
       always:
         - name: Delete temp directory
@@ -105,3 +112,4 @@
             path: "{{ tempdir.path }}"
             state: absent
           run_once: true
+          delegate_to: localhost
