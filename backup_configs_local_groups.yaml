@@ -40,7 +40,7 @@
 
       - name: clone existing repository
         #ansible.builtin.git:
-        #  key_file: "ssh -i /home/itential/id_rsa"
+        #  key_file: "ssh -i /home/ec2-user/.ssh/id_rsa"
         #  repo: "{{ git_repo_url }}"
         #  dest: "{{ tempdir.path }}"
         ansible.builtin.debug:
@@ -93,7 +93,7 @@
         #args:
         #  chdir: "{{ tempdir.path }}"
         #environment:
-        #  GIT_SSH_COMMAND: "ssh -i /home/itential/id_rsa"
+        #  GIT_SSH_COMMAND: "ssh -i /home/ec2-user/.ssh/id_rsa"
         ansible.builtin.debug:
           msg:
           - "Successfully pushed to repo: {{ git_repo_url }}"
