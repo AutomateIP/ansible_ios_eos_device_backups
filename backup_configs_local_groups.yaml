@@ -10,7 +10,7 @@
 
   hosts: "{{ target_group | default('all') }}"
   gather_facts: no
-  strategy: ansible.builtin.linear #change default from free to linear
+  strategy: ansible.builtin.linear # change default from free to linear
 
   vars:
     git_repo_branch: "master"
@@ -44,9 +44,9 @@
           key_file: "ssh -i /home/ec2-user/.ssh/id_rsa"
           repo: "{{ git_repo_url }}"
           dest: "{{ tempdir.path }}"
-        ansible.builtin.debug:
-          msg:
-          - "Successfully cloned repo: {{ git_repo_url }}"
+        #ansible.builtin.debug:
+        #  msg:
+        #  - "Successfully cloned repo: {{ git_repo_url }}"
         run_once: true
         delegate_to: 127.0.0.1
 
@@ -70,7 +70,7 @@
           commands:
             - show running-config
         register: eos_config
-      
+
       - name: Set device_config
         set_fact:
           device_config: "{{ ios_config | combine(eos_config) }}"
@@ -100,9 +100,9 @@
           chdir: "{{ tempdir.path }}"
         environment:
           GIT_SSH_COMMAND: "ssh -i /home/ec2-user/.ssh/id_rsa"
-        ansible.builtin.debug:
-          msg:
-          - "Successfully pushed to repo: {{ git_repo_url }}"
+        #ansible.builtin.debug:
+        #  msg:
+        #  - "Successfully pushed to repo: {{ git_repo_url }}"
         run_once: true
         delegate_to: 127.0.0.1
 
