@@ -11,7 +11,7 @@ ansible-playbook -i inventory.yml backup_configs_local_groups.yaml --extra-vars 
 
 IAG 5 Stuff
 
-iagctl create repository device_backups --url https://github.com/AutomateIP/ansible_ios_eos_device_backups.git
+iagctl create repository device_backups --url https://github.com/AutomateIP/ansible_ios_eos_device_backups.git --reference iag5
 
 iagctl create decorator backup_configs_local_group --schema @../ansible_ios_eos_device_backups/backup_configs_local_groups.decorator.json
 

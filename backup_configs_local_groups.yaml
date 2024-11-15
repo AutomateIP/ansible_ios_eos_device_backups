@@ -61,7 +61,7 @@
         when: ansible_network_os == 'ios'
         cisco.ios.ios_command:
           commands:
-            - show running-config
+            - show running-config brief
         register: ios_config
 
       - name: Gather configuration from Arista EOS devices
